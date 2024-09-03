@@ -11,8 +11,8 @@ function addCopyButton(img) {
   if (img.classList.contains("SqNWg")) return;
 
   // Check if the image is inside a container with a sponsored indicator
-  const container1 = img.closest("figure");
-  if (container1 && container1.querySelector(".XtjY4.o0Ned.J6aD_")) return; // Skip if the specific sponsored indicator is found
+  // const container1 = img.closest("figure");
+  // if (container1 && container1.querySelector(".XtjY4.o0Ned.J6aD_")) return; // Skip if the specific sponsored indicator is found
 
   // Extract the base URL from the srcset attribute
   const srcset = img.getAttribute("srcset");
@@ -34,8 +34,7 @@ function addCopyButton(img) {
   shadowContainer.className = "unsplash-copy-button-container";
   shadowContainer.style.position = "absolute";
   shadowContainer.style.top = "10px"; // Position at the top
-  shadowContainer.style.left = "50%"; // Center horizontally
-  shadowContainer.style.transform = "translateX(-50%)"; // Adjust position to truly center
+  shadowContainer.style.left = "2%"; // Center horizontally
   shadowContainer.style.zIndex = "1"; // High z-index to ensure it's above other elements
   shadowContainer.style.pointerEvents = "auto"; // Ensure the button can be clicked
 
