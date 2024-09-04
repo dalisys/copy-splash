@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unsplash Image Link Copier Settings</title>
+    <link rel="stylesheet" href="popup.css" />
+    <!-- Font Awesome Link -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="settings-container">
+      <h3>Set Default Image Parameters</h3>
+      <form id="settings-form">
+        <label for="width">
+          Width:
+          <a
+            href="https://docs.imgix.com/apis/rendering/size/image-width"
+            target="_blank"
+            ><i class="fas fa-link"></i
+          ></a>
+        </label>
+        <input type="number" id="width" name="width" />
+
+        <label for="height">
+          Height:
+          <a
+            href="https://docs.imgix.com/apis/rendering/size/image-height"
+            target="_blank"
+            ><i class="fas fa-link"></i
+          ></a>
+        </label>
+        <input type="number" id="height" name="height" />
+
+        <label for="quality">
+          Quality:
+          <a
+            href="https://docs.imgix.com/apis/rendering/format/output-quality"
+            target="_blank"
+            ><i class="fas fa-link"></i
+          ></a>
+        </label>
+        <input
+          type="number"
+          id="quality"
+          name="quality"
+          min="0"
+          max="100"
+          placeholder="1-100 (recommend 80)"
+        />
+
+        <label for="ar">
+          Aspect Ratio (w:h):
+          <a
+            href="https://docs.imgix.com/apis/rendering/size/aspect-ratio"
+            target="_blank"
+            ><i class="fas fa-link"></i
+          ></a>
+        </label>
+        <input
+          type="text"
+          id="ar"
+          name="ar"
+          placeholder="works only with fit= crop or fill"
+        />
+
+        <label for="fit">
+          Fit:
+          <a
+            href="https://docs.imgix.com/apis/rendering/size/resize-fit-mode"
+            target="_blank"
+            ><i class="fas fa-link"></i
+          ></a>
+        </label>
+        <select id="fit" name="fit">
+          <option value="">Default</option>
+          <option value="clamp">Clamp</option>
+          <option value="clip">Clip</option>
+          <option value="crop">Crop</option>
+          <option value="facearea">Facearea</option>
+          <option value="fill">Fill</option>
+          <option value="fillmax">Fillmax</option>
+          <option value="max">Max</option>
+          <option value="min">Min</option>
+          <option value="scale">Scale</option>
+        </select>
+
+        <label for="crop">
+          Crop:
+          <a
+            href="https://docs.imgix.com/apis/rendering/size/crop-mode"
+            target="_blank"
+            ><i class="fas fa-link"></i
+          ></a>
+        </label>
+        <select id="crop" name="crop">
+          <option value="">None</option>
+          <option value="top">Top</option>
+          <option value="bottom">Bottom</option>
+          <option value="left">Left</option>
+          <option value="right">Right</option>
+          <option value="faces">Faces</option>
+          <option value="focalpoint">Focalpoint</option>
+          <option value="edges">Edges</option>
+          <option value="Entropy">Entropy</option>
+        </select>
+
+        <!-- Custom Query Parameters Field -->
+        <label for="custom-query">
+          Custom Query Parameters:
+          <a
+            href="https://docs.imgix.com/apis/rendering/overview"
+            target="_blank"
+            ><i class="fas fa-link"></i></a
+        ></label>
+        <input
+          type="text"
+          id="custom-query"
+          name="custom-query"
+          placeholder="e.g., bg=FFFFFF&dpr=2"
+        />
+
+        <!-- Buttons for Save and Reset -->
+        <div id="button-group">
+          <button type="button" id="save-button">Save Settings</button>
+          <button type="button" id="reset-button">Reset</button>
+        </div>
+      </form>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
