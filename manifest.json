@@ -16,6 +16,7 @@
   },
   "action": {
     "default_popup": "popup.html",
+    "default_title": "CopySplash\nClick to set image settings",
     "default_icon": {
       "48": "icon48.png",
       "128": "icon128.png"
