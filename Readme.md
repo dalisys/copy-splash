@@ -2,6 +2,8 @@
 
 Easily copy the direct URL of any free image on Unsplash with a single click! Perfect for developers, designers, or anyone looking to quickly integrate Unsplash images into their code or use them as embedded content.
 
+Published in [Chrome Store](https://chromewebstore.google.com/detail/nphognmkdpdfenhobfmedbpdahegdklm)
+
 ## Features
 
 - **Copy Image URL**: A "Copy Link" button appears over each free Unsplash image, allowing you to instantly copy the image URL to your clipboard.
