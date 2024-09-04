@@ -78,7 +78,7 @@ function addCopyButton(img) {
     event.preventDefault();
 
     chrome.storage.sync.get(
-      ["width", "height", "quality", "fit", "crop"],
+      ["width", "height", "quality", "fit", "crop", "customQuery"],
       (settings) => {
         let baseUrl = extractBaseUrl(srcset);
 
@@ -89,6 +89,15 @@ function addCopyButton(img) {
         if (settings.quality) params.append("q", settings.quality);
         if (settings.fit) params.append("fit", settings.fit);
         if (settings.crop) params.append("crop", settings.crop);
+        if (settings.ar) params.append("ar", settings.crop);
+
+        // If customQuery exists, parse it and add its key-value pairs to params
+        if (settings.customQuery) {
+          const customParams = new URLSearchParams(settings.customQuery);
+          customParams.forEach((value, key) => {
+            params.append(key, value);
+          });
+        }
 
         if (params.toString()) {
           baseUrl += "?" + params.toString();
