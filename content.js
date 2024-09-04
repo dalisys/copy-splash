@@ -74,14 +74,34 @@ function addCopyButton(img) {
 
   // Copy URL to clipboard on button click and prevent event propagation and default behavior
   button.onclick = (event) => {
-    event.stopPropagation(); // Prevent the event from propagating to the parent elements
-    event.preventDefault(); // Prevent the default action (e.g., opening a link)
-    navigator.clipboard.writeText(baseUrl).then(() => {
-      button.textContent = "Link Copied!"; // Change button text on click
-      setTimeout(() => {
-        button.textContent = "Copy Link"; // Revert text after 1 second
-      }, 1000);
-    });
+    event.stopPropagation();
+    event.preventDefault();
+
+    chrome.storage.sync.get(
+      ["width", "height", "quality", "fit", "crop"],
+      (settings) => {
+        let baseUrl = extractBaseUrl(srcset);
+
+        // Append user settings as query parameters to the URL
+        const params = new URLSearchParams();
+        if (settings.width) params.append("w", settings.width);
+        if (settings.height) params.append("h", settings.height);
+        if (settings.quality) params.append("q", settings.quality);
+        if (settings.fit) params.append("fit", settings.fit);
+        if (settings.crop) params.append("crop", settings.crop);
+
+        if (params.toString()) {
+          baseUrl += "?" + params.toString();
+        }
+
+        navigator.clipboard.writeText(baseUrl).then(() => {
+          button.textContent = "Link Copied!";
+          setTimeout(() => {
+            button.textContent = "Copy Link";
+          }, 1000);
+        });
+      }
+    );
   };
 
   // Add shadow container to the image's parent container
