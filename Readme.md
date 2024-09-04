@@ -1,4 +1,4 @@
-# Unsplash Image Link Copier
+# CopySplash (Unsplash Image Link Copier)
 
 Easily copy the direct URL of any free image on Unsplash with a single click! Perfect for developers, designers, or anyone looking to quickly integrate Unsplash images into their code or use them as embedded content.
 
