@@ -12,94 +12,125 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  overflow: hidden; /* Prevents any overflow that causes scrollbars */
   margin: 0;
+}
+
+#settings-container {
+  width: 360px; /* Adjust width */
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 h3 {
   text-align: center;
   font-size: 1.2rem;
-  margin-bottom: 10px; /* Reduced margin */
-  margin-top: 10px;
+  margin-bottom: 15px;
   color: #333;
 }
 
-#settings-form {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 15px; /* Reduced padding */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 280px; /* Adjusted width to prevent overflow */
-  max-width: 100%;
+/* Row Layout for input fields */
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.col {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.col:last-child {
+  margin-right: 0;
 }
 
 label {
-  font-size: 0.85rem; /* Slightly smaller font size */
+  font-size: 0.85rem;
   color: #555;
-  margin-bottom: 6px;
   display: block;
+  margin-bottom: 6px;
 }
 
 input[type="number"],
 input[type="text"],
 select {
   width: 100%;
-  padding: 8px; /* Reduced padding */
-  margin-bottom: 10px; /* Reduced margin */
+  padding: 8px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.85rem;
 }
 
-input[type="number"]:focus,
-select:focus,
-input[type="text"]:focus {
+input:focus,
+select:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
 }
 
-#button-group {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-#save-button,
-#reset-button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 8px 10px; /* Reduced padding */
-  font-size: 0.85rem; /* Slightly smaller font size */
-  border-radius: 4px;
+button {
+  padding: 10px;
+  font-size: 0.85rem;
+  border-radius: 6px;
   cursor: pointer;
+  border: none;
   width: 48%;
 }
 
-#reset-button {
+.blue {
+  background-color: #007bff;
+  color: white;
+}
+
+.red {
   background-color: #dc3545;
+  color: white;
 }
 
-#reset-button:hover {
-  background-color: #c82333;
+.green {
+  background-color: #28a745;
+  color: white;
 }
 
-#save-button:hover {
-  background-color: #0056b3;
+.black {
+  background-color: #000;
+  color: white;
 }
 
-label a {
-  margin-left: 5px;
-  color: #007bff;
-  text-decoration: none;
+button:hover {
+  opacity: 0.9;
 }
 
-label a:hover {
-  color: #0056b3;
+#toast {
+  position: fixed;
+  right: 20px;
+  left: 20px;
+  top: 0;
+  min-width: 200px;
+  padding: 10px 20px;
+  margin: 10px;
+  background-color: rgb(4, 87, 21);
+  color: #fff;
+  border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s, visibility 0.5s;
+  z-index: 1000;
+  text-align: center;
 }
 
-label i {
-  font-size: 0.75rem; /* Slightly smaller icon size */
-  vertical-align: middle;
+#toast.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+#custom-query {
+  margin-bottom: 15px;
 }
