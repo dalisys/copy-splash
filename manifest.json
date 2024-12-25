@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "CopySplash (Unsplash Image URL Copier)",
-  "version": "1.2.6",
-  "description": "Copy and Customize Unsplash image URL with a click!",
+  "name": "CopySplash (Unsplash Image Customizer)",
+  "version": "1.2.7",
+  "description": "Copy, download and customize Unsplash image URL with a click!",
   "permissions": ["clipboardWrite", "storage", "downloads"],
   "background": {
     "service_worker": "background.js"
