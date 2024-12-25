@@ -1,18 +1,60 @@
+// Function to check if an image is an Unsplash image using multiple detection strategies
+function isUnsplashImage(img) {
+  // Strategy 1: Check srcset URL pattern
+  const srcset = img.getAttribute("srcset");
+  if (!srcset) return false;
+
+  const baseUrl = extractBaseUrl(srcset);
+  if (
+    !baseUrl.startsWith("https://images.unsplash.com/") ||
+    baseUrl.includes("/profile-")
+  ) {
+    return false;
+  }
+
+  // Strategy 2: Check if image is in a typical Unsplash photo container
+  const figure = img.closest("figure");
+  if (figure) {
+    // Check for typical Unsplash photo container structure
+    const hasPhotoLinks =
+      figure.querySelectorAll('a[href*="/photos/"]').length > 0;
+    const hasDownloadButton =
+      figure.querySelectorAll('a[href*="download"]').length > 0;
+    if (hasPhotoLinks || hasDownloadButton) return true;
+  }
+
+  // Strategy 3: Check image attributes and properties
+  const imgWidth = img.naturalWidth || img.width;
+  const imgHeight = img.naturalHeight || img.height;
+  // Unsplash images are typically high quality and larger than profile pictures
+  if (imgWidth > 300 && imgHeight > 300) {
+    // Check if image has typical Unsplash photo attributes
+    const hasUnsplashAttributes =
+      img.getAttribute("alt")?.toLowerCase().includes("photo") ||
+      img.getAttribute("data-test")?.includes("photo") ||
+      img.getAttribute("loading") === "lazy";
+    if (hasUnsplashAttributes) return true;
+  }
+
+  // Strategy 4: Legacy class-based detection (as fallback)
+  return (
+    img.classList.contains("DVW3V") ||
+    img.classList.contains("I7OuT") ||
+    img.classList.contains("L1BOa")
+  );
+}
+
 // Function to safely add the copy button using Shadow DOM
 function addCopyButton(img) {
-  // Ensure the image is a main photo by checking for specific classes
-  if (
-    !img.classList.contains("DVW3V") &&
-    !img.classList.contains("I7OuT") &&
-    !img.classList.contains("L1BOa")
-  )
-    return;
-
+  // Skip if already processed
   if (img.classList.contains("SqNWg")) return;
 
-  // Check if the image is inside a container with a sponsored indicator
-  // const container1 = img.closest("figure");
-  // if (container1 && container1.querySelector(".XtjY4.o0Ned.J6aD_")) return; // Skip if the specific sponsored indicator is found
+  // Use the new detection function
+  if (!isUnsplashImage(img)) return;
+
+  // Ensure we don't duplicate the button
+  if (img.parentElement.querySelector(".unsplash-copy-button-container"))
+    return;
 
   // Extract the base URL from the srcset attribute
   const srcset = img.getAttribute("srcset");
@@ -23,10 +65,6 @@ function addCopyButton(img) {
     !baseUrl.startsWith("https://images.unsplash.com/") ||
     baseUrl.includes("/profile-")
   )
-    return;
-
-  // Ensure we don't duplicate the button
-  if (img.parentElement.querySelector(".unsplash-copy-button-container"))
     return;
 
   // Create a container for the shadow DOM
@@ -208,24 +246,12 @@ const observer = new MutationObserver((mutations) => {
     mutation.addedNodes.forEach((node) => {
       if (node.nodeType === 1) {
         // Ensure it is an element
-        if (
-          node.tagName === "IMG" &&
-          node.hasAttribute("srcset") &&
-          (node.classList.contains("DVW3V") ||
-            node.classList.contains("I7OuT") ||
-            node.classList.contains("L1BOa"))
-        ) {
-          addCopyButton(node); // Add button if it's an Unsplash image with specific classes
+        if (node.tagName === "IMG" && node.hasAttribute("srcset")) {
+          addCopyButton(node);
         } else {
           // If it's not an image, check its children
           node.querySelectorAll("img[srcset]").forEach((img) => {
-            if (
-              img.classList.contains("DVW3V") ||
-              img.classList.contains("I7OuT") ||
-              img.classList.contains("L1BOa")
-            ) {
-              addCopyButton(img);
-            }
+            addCopyButton(img);
           });
         }
       }
@@ -241,13 +267,7 @@ observer.observe(document.body, {
 
 // Initial run to add buttons to already existing images
 document.querySelectorAll("img[srcset]").forEach((img) => {
-  if (
-    img.classList.contains("DVW3V") ||
-    img.classList.contains("I7OuT") ||
-    img.classList.contains("L1BOa")
-  ) {
-    addCopyButton(img); // Only add button to images with specific classes
-  }
+  addCopyButton(img);
 });
 
 /**
