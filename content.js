@@ -198,8 +198,11 @@ function addCopyButton(img) {
         );
         const imageId = imageIdMatch ? imageIdMatch[1] : "unsplash-image";
 
+        // Extract artist name
+        const artistName = extractArtistName(img);
+
         // Generate the filename using the new function
-        const filename = generateFilename(imageId, settings);
+        const filename = generateFilename(imageId, settings, artistName);
 
         // Send a message to the background script to initiate the download
         chrome.runtime.sendMessage(
@@ -271,13 +274,43 @@ document.querySelectorAll("img[srcset]").forEach((img) => {
 });
 
 /**
+ * Attempts to extract the artist name from the image's surrounding elements
+ * @param {HTMLImageElement} img - The image element
+ * @returns {string} - The artist name or empty string if not found
+ */
+function extractArtistName(img) {
+  // Try to find the closest figure or article container
+  const container = img.closest("figure") || img.closest("article");
+  if (!container) return "";
+
+  // Find all links in the container
+  const links = container.getElementsByTagName("a");
+
+  // Look through all links to find one that matches the Unsplash user pattern
+  for (const link of links) {
+    const href = link.getAttribute("href") || "";
+    // Match either /@username or /users/username pattern
+    if (href.includes("/@") || href.includes("/users/")) {
+      const fullName = link.textContent.trim();
+      if (fullName) {
+        // Avoid returning the username (which starts with @)
+        return fullName.startsWith("@") ? "" : fullName;
+      }
+    }
+  }
+
+  return "";
+}
+
+/**
  * Generates a sanitized filename incorporating image ID and user-selected parameters.
  *
  * @param {string} imageId - The unique identifier of the image.
  * @param {Object} settings - User-selected settings for customizing the image URL.
+ * @param {string} artistName - The name of the artist (optional).
  * @returns {string} - A sanitized filename string.
  */
-function generateFilename(imageId, settings) {
+function generateFilename(imageId, settings, artistName = "") {
   // Function to sanitize filename by removing invalid characters
   function sanitizeFilename(name) {
     return name.replace(/[^a-z0-9_\-\.]/gi, "_");
@@ -285,6 +318,11 @@ function generateFilename(imageId, settings) {
 
   // Accumulate parameters for filename
   let paramsForFilename = [];
+
+  // Add artist name as prefix if available, with 'made_by_' prefix
+  const safeArtistName = artistName
+    ? `made_by_${sanitizeFilename(artistName)}-`
+    : "";
 
   if (settings.width) paramsForFilename.push(`w${settings.width}`);
   if (settings.height) paramsForFilename.push(`h${settings.height}`);
@@ -297,7 +335,6 @@ function generateFilename(imageId, settings) {
   if (settings.customQuery) {
     const customParams = new URLSearchParams(settings.customQuery);
     customParams.forEach((value, key) => {
-      // Replace any spaces or special characters in key or value
       const safeKey = key.replace(/[^a-z0-9_\-]/gi, "");
       const safeValue = value.replace(/[^a-z0-9_\-]/gi, "");
       paramsForFilename.push(`${safeKey}${safeValue}`);
@@ -307,11 +344,11 @@ function generateFilename(imageId, settings) {
   // Join all parameters with a hyphen
   const paramsString = paramsForFilename.join("-");
 
-  // Construct the final filename
+  // Construct the final filename with artist name prefix
   const baseFilename = sanitizeFilename(imageId);
   const filename = paramsString
-    ? `${baseFilename}-${paramsString}.jpg`
-    : `${baseFilename}.jpg`;
+    ? `${safeArtistName}${baseFilename}-${paramsString}.jpg`
+    : `${safeArtistName}${baseFilename}.jpg`;
 
   return filename;
 }
