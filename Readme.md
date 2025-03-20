@@ -1,4 +1,4 @@
-# CopySplash (Unsplash Image Link Copier)
+# Unsplash Customizer (prev. CopySplash)
 
 Easily copy the direct URL of any free image on Unsplash with a single click! Perfect for developers, designers, or anyone looking to quickly integrate Unsplash images into their code or use them as embedded content.
 
@@ -17,9 +17,11 @@ Published in [Chrome Store](https://chromewebstore.google.com/detail/nphognmkdpd
    ```bash
    git clone https://github.com/yourusername/unsplash-image-link-copier.git
    ```
-    ```bash
+
+   ```bash
    cd unsplash-image-link-copier
-    ```
+   ```
+
 2. **Load the Extension in Chrome:**
    - Open Chrome and navigate to `chrome://extensions/`.
    - Enable "Developer mode" (top right corner).
@@ -28,6 +30,7 @@ Published in [Chrome Store](https://chromewebstore.google.com/detail/nphognmkdpd
 ## Usage
 
 1. **Copy Image URLs:**
+
    - Visit [Unsplash](https://unsplash.com/).
    - Hover over any free image to see the "Copy Link" button.
    - Click the button to copy the image URL to your clipboard.
