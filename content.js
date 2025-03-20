@@ -1,5 +1,19 @@
 // Function to check if an image is an Unsplash image using multiple detection strategies
 function isUnsplashImage(img) {
+  // First check if the image is too small
+  const imgWidth =
+    img.naturalWidth || img.width || parseInt(img.getAttribute("width")) || 0;
+  const imgHeight =
+    img.naturalHeight ||
+    img.height ||
+    parseInt(img.getAttribute("height")) ||
+    0;
+
+  // Skip small images (like thumbnails and icons)
+  if (imgWidth <= 200 || imgHeight <= 200) {
+    return false;
+  }
+
   // Strategy 1: Check srcset URL pattern
   const srcset = img.getAttribute("srcset");
   if (!srcset) return false;
@@ -12,9 +26,43 @@ function isUnsplashImage(img) {
     return false;
   }
 
-  // Strategy 2: Check if image is in a typical Unsplash photo container
+  // Strategy 2: Check for semantic markup with itemprop attributes
+  if (img.hasAttribute("itemprop")) {
+    const itemprop = img.getAttribute("itemprop");
+    if (itemprop === "thumbnailUrl" || itemprop === "contentUrl") {
+      // Additional size check for thumbnails
+      const sizes = img.getAttribute("sizes");
+      if (sizes && sizes.includes("1x1")) {
+        return false;
+      }
+      return true;
+    }
+  }
+
+  // Strategy 3: Check for parent elements with stable data attributes
   const figure = img.closest("figure");
   if (figure) {
+    if (
+      figure.hasAttribute("data-testid") &&
+      figure.getAttribute("data-testid").includes("photo-grid")
+    ) {
+      // Check if this is a collection thumbnail
+      if (
+        figure.closest('[class*="collection"]') ||
+        figure.closest('[href*="collection"]')
+      ) {
+        return false;
+      }
+      return true;
+    }
+
+    if (
+      figure.hasAttribute("itemprop") &&
+      figure.getAttribute("itemprop") === "image"
+    ) {
+      return true;
+    }
+
     // Check for typical Unsplash photo container structure
     const hasPhotoLinks =
       figure.querySelectorAll('a[href*="/photos/"]').length > 0;
@@ -23,24 +71,62 @@ function isUnsplashImage(img) {
     if (hasPhotoLinks || hasDownloadButton) return true;
   }
 
-  // Strategy 3: Check image attributes and properties
-  const imgWidth = img.naturalWidth || img.width;
-  const imgHeight = img.naturalHeight || img.height;
-  // Unsplash images are typically high quality and larger than profile pictures
+  // Strategy 4: Check for parent anchor with specific patterns (for new layout)
+  const parentAnchor = img.closest("a");
+  if (parentAnchor) {
+    // Skip collection thumbnails
+    if (parentAnchor.getAttribute("href")?.includes("/collection")) {
+      return false;
+    }
+
+    // Check for semantic attributes
+    if (
+      parentAnchor.hasAttribute("itemprop") &&
+      parentAnchor.getAttribute("itemprop") === "contentUrl"
+    ) {
+      return true;
+    }
+
+    // Check URL patterns that are unlikely to change
+    const href = parentAnchor.getAttribute("href") || "";
+    if (
+      href.includes("/photos/") ||
+      href.includes("/de/fotos/") ||
+      href.includes("/fr/photos/") ||
+      href.includes("/es/fotos/") ||
+      href.includes("/it/foto/")
+    ) {
+      return true;
+    }
+  }
+
+  // Strategy 5: Check image attributes and properties (stable attributes)
+  if (
+    img.hasAttribute("data-testid") &&
+    img.getAttribute("data-testid").includes("photo")
+  ) {
+    // Skip if it's a collection or profile image
+    if (img.closest('[href*="collection"]') || img.closest('[href*="users"]')) {
+      return false;
+    }
+    return true;
+  }
+
+  // Additional size check for any remaining images
   if (imgWidth > 300 && imgHeight > 300) {
     // Check if image has typical Unsplash photo attributes
     const hasUnsplashAttributes =
       img.getAttribute("alt")?.toLowerCase().includes("photo") ||
-      img.getAttribute("data-test")?.includes("photo") ||
       img.getAttribute("loading") === "lazy";
     if (hasUnsplashAttributes) return true;
   }
 
-  // Strategy 4: Legacy class-based detection (as fallback)
+  // Fallback: Base URL check only as last resort
   return (
-    img.classList.contains("DVW3V") ||
-    img.classList.contains("I7OuT") ||
-    img.classList.contains("L1BOa")
+    baseUrl.startsWith("https://images.unsplash.com/") &&
+    !baseUrl.includes("/profile-") &&
+    imgWidth > 300 &&
+    imgHeight > 300
   );
 }
 
@@ -72,9 +158,10 @@ function addCopyButton(img) {
   shadowContainer.className = "unsplash-copy-button-container";
   shadowContainer.style.position = "absolute";
   shadowContainer.style.top = "10px"; // Position at the top
-  shadowContainer.style.left = "2%"; // Center horizontally
-  shadowContainer.style.zIndex = "1"; // High z-index to ensure it's above other elements
+  shadowContainer.style.left = "10px"; // Position at the left side
+  shadowContainer.style.zIndex = "2"; // Lower z-index to stay below the header
   shadowContainer.style.pointerEvents = "auto"; // Ensure the button can be clicked
+  shadowContainer.style.transform = "none"; // Prevent any transforms from affecting position
 
   // Create the shadow root
   const shadowRoot = shadowContainer.attachShadow({ mode: "open" });
@@ -84,8 +171,8 @@ function addCopyButton(img) {
   style.textContent = `
   .unsplash-copy-button {
     position: relative;
-    z-index: 1;
-    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.6);
     color: #fff;
     border: 1px solid #e1e1e1;
     padding: 5px 10px;
@@ -94,11 +181,13 @@ function addCopyButton(img) {
     border-radius: 4px;
     transition: background-color 0.3s, color 0.3s;
     margin-bottom: 5px;
+    text-shadow: 0px 0px 2px rgba(0,0,0,0.8);
+    transform: none;
   }
 
   .unsplash-copy-button:hover {
-    background-color: #3B136C; /* Change background on hover */
-    color: #fff; /* Change text color on hover */
+    background-color: #3B136C;
+    color: #fff;
   }
 `;
   shadowRoot.appendChild(style);
@@ -232,8 +321,24 @@ function addCopyButton(img) {
 
   // Add shadow container to the image's parent container
   const container = img.parentElement;
-  container.style.position = "relative"; // Ensure the parent is positioned to allow absolute positioning
+
+  // Force the container to have the correct positioning context
+  container.style.position = "relative";
+  container.style.display = "block"; // Ensure block display
+  container.style.transform = "none"; // Prevent transforms from affecting positioning
+
+  // If there's a parent figure, also ensure it has proper positioning
+  const parentFigure = container.closest("figure");
+  if (parentFigure) {
+    parentFigure.style.position = "relative";
+    parentFigure.style.display = "block";
+  }
+
   container.appendChild(shadowContainer);
+
+  // Mark the image as processed using a data attribute instead of a class
+  img.setAttribute("data-unsplash-processed", "true");
+  img.classList.add("SqNWg"); // Keep for backward compatibility
 }
 
 // Function to extract the base URL from the srcset
@@ -250,12 +355,17 @@ const observer = new MutationObserver((mutations) => {
       if (node.nodeType === 1) {
         // Ensure it is an element
         if (node.tagName === "IMG" && node.hasAttribute("srcset")) {
-          addCopyButton(node);
+          // Skip if already processed (using more stable data attribute)
+          if (!node.hasAttribute("data-unsplash-processed")) {
+            addCopyButton(node);
+          }
         } else {
           // If it's not an image, check its children
-          node.querySelectorAll("img[srcset]").forEach((img) => {
-            addCopyButton(img);
-          });
+          node
+            .querySelectorAll("img[srcset]:not([data-unsplash-processed])")
+            .forEach((img) => {
+              addCopyButton(img);
+            });
         }
       }
     });
@@ -269,9 +379,11 @@ observer.observe(document.body, {
 });
 
 // Initial run to add buttons to already existing images
-document.querySelectorAll("img[srcset]").forEach((img) => {
-  addCopyButton(img);
-});
+document
+  .querySelectorAll("img[srcset]:not([data-unsplash-processed])")
+  .forEach((img) => {
+    addCopyButton(img);
+  });
 
 /**
  * Attempts to extract the artist name from the image's surrounding elements
