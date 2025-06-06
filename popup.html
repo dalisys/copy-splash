@@ -3,169 +3,207 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Unsplash Image Link Copier Settings</title>
+    <title>Image Parameter Settings</title>
     <link rel="stylesheet" href="popup.css" />
-    <!-- Font Awesome Link -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+    />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
       rel="stylesheet"
     />
   </head>
   <body>
-    <div id="settings-container">
-      <h3>Set Default Image Parameters</h3>
+    <div class="container">
+      <button id="theme-toggle-button" class="theme-toggle-button" aria-label="Toggle theme">
+        <span class="icon sun-icon"><i class="fas fa-sun"></i></span>
+        <span class="icon moon-icon"><i class="fas fa-moon"></i></span>
+      </button>
+      <header class="header">
+        <h1>Image Parameters</h1>
+        <p>Set default image parameters for Unsplash</p>
+      </header>
+
       <form id="settings-form">
-        <div class="row">
-          <div class="col">
-            <label for="width">
-              Width:
-              <a
-                href="https://docs.imgix.com/apis/rendering/size/image-width"
-                target="_blank"
-                ><i class="fas fa-link"></i
-              ></a>
-            </label>
-            <input
-              type="number"
-              id="width"
-              name="width"
-              placeholder="width px"
-            />
+        <div class="bento-grid">
+          <div class="bento-box">
+            <h4>Dimensions</h4>
+            <div class="form-group">
+              <label for="width"
+                >Width
+                <a
+                  href="https://docs.imgix.com/apis/rendering/size/image-width"
+                  target="_blank"
+                  rel="noopener"
+                  class="tooltip-link"
+                  ><i class="fas fa-link"></i
+                  ><span class="tooltip-text-custom">Click for documentation</span></a
+              ></label>
+              <input type="number" id="width" name="width" placeholder="500" />
+            </div>
+            <div class="form-group">
+              <label for="height"
+                >Height
+                <a
+                  href="https://docs.imgix.com/apis/rendering/size/image-height"
+                  target="_blank"
+                  rel="noopener"
+                  class="tooltip-link"
+                  ><i class="fas fa-link"></i
+                  ><span class="tooltip-text-custom">Click for documentation</span></a
+              ></label>
+              <input type="number" id="height" name="height" placeholder="500" />
+            </div>
+            <div class="form-group">
+              <label for="ar"
+                >Aspect Ratio (w:h)
+                <a
+                  href="https://docs.imgix.com/apis/rendering/size/aspect-ratio"
+                  target="_blank"
+                  rel="noopener"
+                  class="tooltip-link"
+                  ><i class="fas fa-link"></i
+                  ><span class="tooltip-text-custom">Click for documentation</span></a
+              ></label>
+              <input type="text" id="ar" name="ar" placeholder="w:h" />
+            </div>
           </div>
-          <div class="col">
-            <label for="height">
-              Height:
-              <a
-                href="https://docs.imgix.com/apis/rendering/size/image-height"
-                target="_blank"
-                ><i class="fas fa-link"></i
-              ></a>
-            </label>
-            <input
-              type="number"
-              id="height"
-              name="height"
-              placeholder="height px"
-            />
+
+          <div class="bento-box">
+            <h4>Image Settings</h4>
+            <div class="form-group">
+              <label for="quality"
+                >Quality
+                <a
+                  href="https://docs.imgix.com/apis/rendering/format/output-quality"
+                  target="_blank"
+                  rel="noopener"
+                  class="tooltip-link"
+                  ><i class="fas fa-link"></i
+                  ><span class="tooltip-text-custom">Click for documentation</span></a
+              ></label>
+              <input
+                type="number"
+                id="quality"
+                name="quality"
+                min="0"
+                max="100"
+                placeholder="80"
+              />
+            </div>
+            <div class="form-group">
+              <label for="fit"
+                >Fit
+                <a
+                  href="https://docs.imgix.com/apis/rendering/size/resize-fit-mode"
+                  target="_blank"
+                  rel="noopener"
+                  class="tooltip-link"
+                  ><i class="fas fa-link"></i
+                  ><span class="tooltip-text-custom">Click for documentation</span></a
+              ></label>
+              <select id="fit" name="fit">
+                <option value="crop">Crop</option>
+                <option value="clip">Clip</option>
+                <option value="clamp">Clamp</option>
+                <option value="facearea">Facearea</option>
+                <option value="fill">Fill</option>
+                <option value="fillmax">Fillmax</option>
+                <option value="max">Max</option>
+                <option value="min">Min</option>
+                <option value="scale">Scale</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="crop"
+                >Crop
+                <a
+                  href="https://docs.imgix.com/apis/rendering/size/crop-mode"
+                  target="_blank"
+                  rel="noopener"
+                  class="tooltip-link"
+                  ><i class="fas fa-link"></i
+                  ><span class="tooltip-text-custom">Click for documentation</span></a
+              ></label>
+              <select id="crop" name="crop">
+                <option value="faces">Faces</option>
+                <option value="top">Top</option>
+                <option value="bottom">Bottom</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+                <option value="focalpoint">Focalpoint</option>
+                <option value="edges">Edges</option>
+                <option value="entropy">Entropy</option>
+                <option value="">None</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <div class="row">
-          <div class="col">
-            <label for="quality">
-              Quality:
-              <a
-                href="https://docs.imgix.com/apis/rendering/format/output-quality"
-                target="_blank"
-                ><i class="fas fa-link"></i
-              ></a>
-            </label>
-            <input
-              type="number"
-              id="quality"
-              name="quality"
-              min="0"
-              max="100"
-              placeholder="1-100 (recommend 80)"
-            />
+          <div class="bento-box full-width-box">
+            <h4>Custom Query</h4>
+            <div class="form-group">
+              <label for="custom-query"
+                >Custom Parameters
+                <a
+                  href="https://docs.imgix.com/apis/rendering/overview"
+                  target="_blank"
+                  rel="noopener"
+                  class="tooltip-link"
+                  ><i class="fas fa-link"></i
+                  ><span class="tooltip-text-custom">Click for documentation</span></a
+              ></label>
+              <input
+                type="text"
+                id="custom-query"
+                name="custom-query"
+                placeholder="e.g., bg=FFFFFF&dpr=2"
+              />
+            </div>
           </div>
-          <div class="col">
-            <label for="ar">
-              Aspect Ratio (w:h):
-              <a
-                href="https://docs.imgix.com/apis/rendering/size/aspect-ratio"
-                target="_blank"
-                ><i class="fas fa-link"></i
-              ></a>
-            </label>
-            <input type="text" id="ar" name="ar" placeholder="w:h" />
+
+          <div class="bento-box">
+            <h4>Load Profile</h4>
+            <div class="profile-actions">
+              <select id="profiles" aria-label="Profiles">
+                <option value="" disabled selected>Select a profile</option>
+              </select>
+              <input type="file" id="import-profile-input" style="display: none;" accept=".json"/>
+            </div>
+            <div class="profile-buttons-row">
+              <button type="button" id="delete-profile">Delete</button>
+              <button type="button" id="rename-profile">Rename</button>
+            </div>
           </div>
-        </div>
 
-        <div class="row">
-          <div class="col">
-            <label for="fit">
-              Fit:
-              <a
-                href="https://docs.imgix.com/apis/rendering/size/resize-fit-mode"
-                target="_blank"
-                ><i class="fas fa-link"></i
-              ></a>
-            </label>
-            <select id="fit" name="fit">
-              <option value="">Select</option>
-              <option value="clamp">Clamp</option>
-              <option value="clip">Clip</option>
-              <option value="crop">Crop</option>
-              <option value="facearea">Facearea</option>
-              <option value="fill">Fill</option>
-              <option value="fillmax">Fillmax</option>
-              <option value="max">Max</option>
-              <option value="min">Min</option>
-              <option value="scale">Scale</option>
-            </select>
+          <div class="bento-box">
+            <h4>Profile Management</h4>
+            <div class="profile-create">
+              <input
+                type="text"
+                id="profile-name"
+                placeholder="New Profile Name"
+              />
+              <button type="button" id="save-profile">Create</button>
+            </div>
+            <div class="profile-buttons-row">
+              <button type="button" id="import-profile-button">Import</button>
+              <button type="button" id="export-profile">Export</button>
+            </div>
           </div>
-          <div class="col">
-            <label for="crop">
-              Crop:
-              <a
-                href="https://docs.imgix.com/apis/rendering/size/crop-mode"
-                target="_blank"
-                ><i class="fas fa-link"></i
-              ></a>
-            </label>
-            <select id="crop" name="crop">
-              <option value="">None</option>
-              <option value="top">Top</option>
-              <option value="bottom">Bottom</option>
-              <option value="left">Left</option>
-              <option value="right">Right</option>
-              <option value="faces">Faces</option>
-              <option value="focalpoint">Focalpoint</option>
-              <option value="edges">Edges</option>
-              <option value="entropy">Entropy</option>
-            </select>
-          </div>
-        </div>
-
-        <label for="custom-query">
-          Custom Query Parameters:
-          <a
-            href="https://docs.imgix.com/apis/rendering/overview"
-            target="_blank"
-            ><i class="fas fa-link"></i
-          ></a>
-        </label>
-        <input
-          type="text"
-          id="custom-query"
-          name="custom-query"
-          placeholder="e.g., bg=FFFFFF&dpr=2"
-        />
-
-        <div class="row full-width">
-          <select id="profiles">
-            <option value="" disabled selected>Select Profile</option>
-          </select>
-
-          <button type="button" id="load-profile" class="blue">Load</button>
-          <button type="button" id="delete-profile" class="red">Delete</button>
-        </div>
-
-        <div id="profile-buttons" class="row">
-          <input type="text" id="profile-name" placeholder="New Profile Name" />
-          <button type="button" id="save-profile">Create Profile</button>
-        </div>
-
-        <div id="button-group" class="row">
-          <button type="button" id="save-button" class="green">
-            Save Settings
-          </button>
-          <button type="button" id="reset-button" class="black">Reset</button>
         </div>
       </form>
+
+      <footer class="footer-actions">
+        <button type="button" id="save-button" class="primary">
+          Save Settings
+        </button>
+        <button type="button" id="reset-button" class="secondary">
+          Reset
+        </button>
+      </footer>
     </div>
-    <script src="popup.js"></script>
     <div id="toast"></div>
+    <script src="popup.js"></script>
   </body>
 </html>
